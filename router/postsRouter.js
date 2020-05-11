@@ -4,24 +4,24 @@ const db = require('../data/db')
 
 const router = express.Router()
 
-checkRequiredKeys((body, requiredKeys) => {
-    for ( const key of requiredKeys) {
+function checkRequiredKeys(body, requiredKeys) {
+    for (const key of requiredKeys) {
         if (!body[key]) {
             return false
         }
     }
     return true
-})
+}
 
-checkAllowedKeys((body, allowedKeys) =>{
+function checkAllowedKeys(body, allowedKeys) {
     allowedKeys = new Set(allowedKeys)
     for (const key in body) {
-        if(!allowedKeys.has(key)) {
+        if (!allowedKeys.has(key)) {
             return false
         }
     }
     return true
-})
+}
 
 router.post('/', async (req, res) => {
     const requiredKeys = ['title', 'contents']
@@ -29,45 +29,45 @@ router.post('/', async (req, res) => {
         !checkRequiredKeys(req.body, requiredKeys) && res.status(400).send("Post need both title and content")
         const potId = await db.insert(req.body)
         res.status(201).send(postId)
-    } catch(e) {
+    } catch (e) {
         res.status(500).send("Something happened! " + e)
     }
 })
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
     try {
         const posts = await db.find()
         posts ? res.status(201).send(posts) : res.status(404).send("No posts are availabel.")
-    } catch(e) {
+    } catch (e) {
         res.status(500).send("Something happened! " + e)
     }
 })
 
-router.get('/:id', async(req, res) => {
+router.get('/:id', async (req, res) => {
     const id = req.params.id
     try {
         const post = await db.findById(id)
         post ? res.status(201).send(post) : res.status(404).send("Post not found.")
-    } catch(e) {
+    } catch (e) {
         res.status(500).send("Something happened! " + e)
     }
 })
 
-router.delete('/:id', async(req, res) => {
-    try  {
+router.delete('/:id', async (req, res) => {
+    try {
         const removedAmount = await db.remove(req.params.id)
-        removedAmount ? res.status(201).json(removedAmount) : res.status(404).json ("Post not found.")
-    } catch(e) {
+        removedAmount ? res.status(201).json(removedAmount) : res.status(404).json("Post not found.")
+    } catch (e) {
         res.status(500).json("Something happened!" + e)
     }
 })
 
-router.put('/:id', async(req, res) => {
+router.put('/:id', async (req, res) => {
     const allowedKeys = ['title', 'contents']
     try {
         !checkAllowedKeys(req.body, allowedKeys) && res.status(400).json("Post edit needs either content or title")
         const post = await db.update(req.params.id, req.body)
-        post === 1 ? res.status(201).json(post) : res.status(404)json("post not found")
+        post === 1 ? res.status(201).json(post) : res.status(404).json("post not found")
     } catch {
         res.status(500).json("Something happened! " + e)
     }
