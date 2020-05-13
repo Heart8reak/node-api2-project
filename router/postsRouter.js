@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         const posts = await db.find()
-        posts ? res.status(201).send(posts) : res.status(404).send("No posts are availabel.")
+        posts ? res.status(200).send(posts) : res.status(404).send("No posts are availabel.")
     } catch (e) {
         res.status(500).send("Something happened! " + e)
     }
@@ -47,7 +47,7 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id
     try {
         const post = await db.findById(id)
-        post ? res.status(201).send(post) : res.status(404).send("Post not found.")
+        post ? res.status(200).send(post) : res.status(404).send("Post not found.")
     } catch (e) {
         res.status(500).send("Something happened! " + e)
     }
@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const removedAmount = await db.remove(req.params.id)
-        removedAmount ? res.status(201).json(removedAmount) : res.status(404).json("Post not found.")
+        removedAmount ? res.status(200).json(removedAmount) : res.status(404).json("Post not found.")
     } catch (e) {
         res.status(500).json("Something happened!" + e)
     }

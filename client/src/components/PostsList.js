@@ -30,7 +30,6 @@ const PostsList = props => {
             })}
         </div>
     )
-
 }
 
 export default PostsList
